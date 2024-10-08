@@ -83,28 +83,23 @@
             border-radius: 8px;
             margin-top: 20px;
         }
-
         #videoUploadForm, #externalVideoForm {
             margin-bottom: 20px;
         }
-
         #videoPreviewContainer {
             display: none;
             margin-bottom: 20px;
         }
-
         #videoPreview {
             max-width: 100%;
             margin-top: 10px;
         }
-
         #videoList {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
         }
-
         .video-item {
             background-color: #fff;
             border-radius: 8px;
@@ -113,13 +108,11 @@
             width: 100%;
             max-width: 400px;
         }
-
         .video-item video, .video-item iframe {
             width: 100%;
             height: auto;
             display: block;
         }
-
         .delete-button {
             background-color: #ff4136;
             border: none;
@@ -127,38 +120,32 @@
             cursor: pointer;
             padding: 5px 10px;
             border-radius: 5px;
-            margin-top: 5px;
-        }
+            margin-top: 5px; }
     </style>
 </head>
 <body>
     <main>
         <section id="videos">
             <h2>Videos</h2>
-
             <!-- Formulario para subir videos locales -->
             <form id="videoUploadForm">
                 <input type="file" id="videoInput" accept="video/*" required>
                 <button type="submit">Subir Video</button>
             </form>
-
             <!-- Formulario para agregar videos desde URLs externas -->
             <form id="externalVideoForm">
                 <input type="url" id="externalVideoInput" placeholder="Ingrese la URL del video externo" required>
                 <button type="submit">Agregar Video Externo</button>
             </form>
-
             <!-- Contenedor para vista previa de videos -->
             <div id="videoPreviewContainer">
                 <h3>Vista previa</h3>
                 <video id="videoPreview" controls></video>
             </div>
-
             <!-- Lista donde se mostrarán los videos -->
             <div id="videoList"></div>
         </section>
     </main>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const videoForm = document.getElementById('videoUploadForm');
@@ -168,12 +155,10 @@
             const videoPreviewContainer = document.getElementById('videoPreviewContainer');
             const videoPreview = document.getElementById('videoPreview');
             const videoList = document.getElementById('videoList');
-
             // Función para crear un elemento de video
             function createVideoItem(videoSrc, isEmbed = false) {
                 const videoItem = document.createElement('div');
                 videoItem.className = 'video-item';
-                
                 let mediaElement;
                 if (isEmbed) {
                     mediaElement = document.createElement('iframe');
@@ -185,9 +170,7 @@
                     mediaElement.src = videoSrc;
                     mediaElement.controls = true;
                 }
-                
                 videoItem.appendChild(mediaElement);
-
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.textContent = 'Eliminar';
@@ -195,12 +178,9 @@
                     videoItem.remove();
                     removeVideoFromStorage(videoSrc);
                 });
-
                 videoItem.appendChild(deleteButton);
-
                 return videoItem;
             }
-
             // Función para procesar la URL del video
             function processVideoUrl(url) {
                 // YouTube
@@ -212,7 +192,6 @@
                         isEmbed: true
                     };
                 }
-
                 // Vimeo
                 const vimeoRegex = /(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/(.+)/;
                 if (vimeoRegex.test(url)) {
@@ -222,28 +201,24 @@
                         isEmbed: true
                     };
                 }
-
                 // Si no es un enlace de YouTube o Vimeo, asumimos que es un enlace directo al video
                 return {
                     src: url,
                     isEmbed: false
                 };
             }
-
             // Función para guardar video en el almacenamiento local
             function saveVideoToStorage(videoSrc, isEmbed) {
                 let videos = JSON.parse(localStorage.getItem('videos')) || [];
                 videos.push({ src: videoSrc, isEmbed: isEmbed });
                 localStorage.setItem('videos', JSON.stringify(videos));
             }
-
             // Función para eliminar video del almacenamiento local
             function removeVideoFromStorage(videoSrc) {
                 let videos = JSON.parse(localStorage.getItem('videos')) || [];
                 videos = videos.filter(video => video.src !== videoSrc);
                 localStorage.setItem('videos', JSON.stringify(videos));
             }
-
             // Función para cargar videos del almacenamiento local
             function loadVideosFromStorage() {
                 const videos = JSON.parse(localStorage.getItem('videos')) || [];
@@ -252,7 +227,6 @@
                     videoList.appendChild(videoItem);
                 });
             }
-
             // Subir video desde un archivo local
             videoForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -266,7 +240,6 @@
                     videoPreviewContainer.style.display = 'none';
                 }
             });
-
             // Agregar video desde una URL
             externalVideoForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -279,7 +252,6 @@
                     externalVideoInput.value = '';
                 }
             });
-
             // Mostrar vista previa del video cuando se selecciona un archivo
             videoInput.addEventListener('change', () => {
                 const file = videoInput.files[0];
@@ -288,7 +260,6 @@
                     videoPreviewContainer.style.display = 'block';
                 }
             });
-
             // Cargar videos guardados al iniciar la página
             loadVideosFromStorage();
         });
@@ -296,10 +267,7 @@
 </body>
 </html>
         </section>
-
-        
     </main>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const videoForm = document.getElementById('videoUploadForm');
@@ -309,30 +277,23 @@
             const videoPreviewContainer = document.getElementById('videoPreviewContainer');
             const videoPreview = document.getElementById('videoPreview');
             const videoList = document.getElementById('videoList');
-
             // Función para crear un elemento de video
             function createVideoItem(videoSrc) {
                 const videoItem = document.createElement('div');
-                videoItem.className = 'video-item';
-                
+                videoItem.className = 'video-item';      
                 const videoElement = document.createElement('video');
                 videoElement.src = videoSrc;
                 videoElement.controls = true;
-                
                 videoItem.appendChild(videoElement);
-
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.textContent = 'Eliminar';
                 deleteButton.addEventListener('click', () => {
                     videoItem.remove();
                 });
-
                 videoItem.appendChild(deleteButton);
-
                 return videoItem;
             }
-
             // Subir video desde un archivo local
             videoForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -345,7 +306,6 @@
                     videoPreviewContainer.style.display = 'none';
                 }
             });
-
             // Agregar video desde una URL
             externalVideoForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -356,7 +316,6 @@
                     externalVideoInput.value = '';
                 }
             });
-
             // Mostrar vista previa del video cuando se selecciona un archivo
             videoInput.addEventListener('change', () => {
                 const file = videoInput.files[0];
@@ -369,13 +328,10 @@
     </script>
 </body>
 </html>
-        </section>
-        
+        </section> 
         <!-- ... (secciones existentes) ... -->
     </main>
-    
     <!-- ... (código existente del footer) ... -->
-    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const videoForm = document.getElementById('videoUploadForm');
@@ -384,27 +340,20 @@
             const externalVideoInput = document.getElementById('externalVideoInput');
             const videoPreviewContainer = document.getElementById('videoPreviewContainer');
             const videoPreview = document.getElementById('videoPreview');
-            const videoList = document.getElementById('videoList');
-            
+            const videoList = document.getElementById('videoList');   
             function createVideoItem(videoSrc, isExternal = false) {
                 const videoItem = document.createElement('div');
-                videoItem.className = 'video-item';
-                
+                videoItem.className = 'video-item'; 
                 const videoElement = document.createElement('video');
                 videoElement.src = videoSrc;
                 videoElement.controls = true;
-                
-                videoItem.appendChild(videoElement);
-                
+                videoItem.appendChild(videoElement); 
                 const videoInfo = document.createElement('div');
-                videoInfo.className = 'video-info';
-                
+                videoInfo.className = 'video-info';  
                 const likeButton = createLikeButton();
                 videoInfo.appendChild(likeButton);
-                
                 const deleteButton = createDeleteButton(videoItem);
                 videoItem.appendChild(deleteButton);
-                
                 if (isExternal) {
                     const sourceLink = document.createElement('a');
                     sourceLink.href = videoSrc;
@@ -412,12 +361,9 @@
                     sourceLink.target = '_blank';
                     videoInfo.appendChild(sourceLink);
                 }
-                
                 videoItem.appendChild(videoInfo);
-                
                 return videoItem;
             }
-
             // Función para crear el botón de "Me gusta"
             function createLikeButton() {
                 const likeButton = document.createElement('button');
@@ -428,31 +374,25 @@
                     </svg>
                     <span class="like-count">0</span>
                 `;
-                
                 likeButton.addEventListener('click', function() {
                     this.classList.toggle('liked');
                     const likeCount = this.querySelector('.like-count');
                     let currentLikes = parseInt(likeCount.textContent);
                     likeCount.textContent = this.classList.contains('liked') ? currentLikes + 1 : currentLikes - 1;
                 });
-                
                 return likeButton;
             }
-
             // Función para crear el botón de eliminación
             function createDeleteButton(videoItem) {
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.textContent = 'Eliminar';
-                
                 deleteButton.addEventListener('click', () => {
                     videoItem.remove();
                     saveVideos(); // Actualiza el almacenamiento local después de eliminar el video
                 });
-                
                 return deleteButton;
             }
-
             // Subir video desde el archivo local
             videoForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -466,7 +406,6 @@
                     saveVideos();
                 }
             });
-
             // Agregar video desde una URL
             externalVideoForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -478,15 +417,13 @@
                     saveVideos();
                 }
             });
-
             videoInput.addEventListener('change', () => {
                 const file = videoInput.files[0];
                 if (file) {
                     videoPreview.src = URL.createObjectURL(file);
                     videoPreviewContainer.style.display = 'block';
                 }
-            });
-            
+            });  
             // Guardar videos en localStorage
             function saveVideos() {
                 const videos = Array.from(videoList.children).map(item => {
@@ -502,7 +439,6 @@
                 });
                 localStorage.setItem('savedVideos', JSON.stringify(videos));
             }
-            
             // Cargar videos desde localStorage
             function loadVideos() {
                 const savedVideos = JSON.parse(localStorage.getItem('savedVideos') || '[]');
@@ -517,16 +453,12 @@
                     videoList.appendChild(videoItem);
                 });
             }
-            
             loadVideos();
         });
     </script>
 </body>
 </html>
-
         </section>
-
-        
         <section id="empresas">
             <h2>Empresas</h2>
             <div class="empresas">
@@ -534,52 +466,42 @@
                 <button onclick="mostrarEmpresas()">Ver empresas</button>
             </div>
         </section>
-
         <section id="opciones-de-pago">
             <h2>Opciones de pago</h2>
             <p>Realiza tus pagos fácilmente con:</p>
             <button onclick="pagarConApplePay()">Apple Pay</button>
             <button onclick="pagarConPaypal()">PayPal</button>
         </section>
-
         <section id="mini-juego">
             <h2>Mini juego</h2>
             <p>¿Sabes mucho sobre la cultura Dominicana? ¡Compruébalo!</p>
             <button onclick="window.location.href='Mini-juego/index.html'">Jugar ahora</button>
         </section>
-
         <section id="contacto">
             <h2>Contáctanos</h2>
             <!-- Aquí puedes agregar un formulario de contacto o información de contacto -->
         </section>
     </main>
-
     <footer>
         <p>© 2024 PRO INNOVA RD. Todos los derechos reservados.</p>
     </footer>
-
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const gridGallery = document.querySelector('.grid-gallery');
             const imageDivs = Array.from(document.querySelectorAll('.grid-gallery__item'));
             const desiredOrder = [2, 0, 1, 3, 4, 5];
-
             desiredOrder.forEach(index => {
                 gridGallery.appendChild(imageDivs[index]);
             });
         });
-
         function mostrarEmpresas() {
             // Implementar la lógica para mostrar empresas
         }
-
         function pagarConApplePay() {
             // Implementar la lógica para pagar con Apple Pay
         }
-
-        function pagarConPaypal() {
-            // Implementar la lógica para pagar con PayPal
+        function pagarConPaypal() {  // Implementar la lógica para pagar con PayPal
         }
     </script>
 </body>
