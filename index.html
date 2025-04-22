@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewg - Comentarios de YouTube</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<style>
+    /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #FFFFFF;
+    color: #1E3A8A;
+    line-height: 1.6;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 2rem;
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+header p {
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+/* Main Section */
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Input Form */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+#video-form {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+}
+
+#video-url {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 2px solid #1E3A8A;
+    border-radius: 5px;
+    outline: none;
+}
+
+#video-url:focus {
+    border-color: #3B82F6;
+}
+
+button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #3B82F6;
+    transform: translateY(-2px);
+}
+
+.error {
+    color: #DC2626;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Comments Section */
+.comments {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.comment {
+    background-color: #F9FAFB;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #1E3A8A;
+}
+
+.comment-text {
+    margin: 0.5rem 0;
+    color: #111827;
+}
+
+.comment-likes {
+    font-size: 0.9rem;
+    color: #6B7280;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    #video-form {
+        flex-direction: column;
+    }
+
+    #video-url, button {
+        width: 100%;
+    }
+
+    button {
+        margin-top: 1rem;
+    }
+}
+</style>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Viewg</h1>
+        <p>Descubre los comentarios más destacados de tus videos favoritos de YouTube</p>
+    </header>
+
+    <!-- Main Section -->
+    <main>
+        <section class="input-container">
+            <form id="video-form">
+                <input type="text" id="video-url" placeholder="Ingresa el enlace del video de YouTube" required>
+                <button type="submit">Obtener comentarios</button>
+            </form>
+            <p id="error-message" class="error"></p>
+        </section>
+
+        <section id="comments-container" class="comments">
+            <!-- Comments will be dynamically inserted here -->
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Viewg. Todos los derechos reservados.</p>
+    </footer>
+
+    <script >
+        // YouTube API Key (replace with your own key)
+const API_KEY = 'AIzaSyD4EjTw2B1i9MMuBquNif1Jw3I3n48ZLsQ'; // Insert your YouTube Data API v3 key here
+
+// DOM Elements
+const videoForm = document.getElementById('video-form');
+const videoUrlInput = document.getElementById('video-url');
+const errorMessage = document.getElementById('error-message');
+const commentsContainer = document.getElementById('comments-container');
+
+// Event Listener for Form Submission
+videoForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMessage.textContent = '';
+    commentsContainer.innerHTML = '';
+
+    const videoUrl = videoUrlInput.value.trim();
+    const videoId = extractVideoId(videoUrl);
+
+    if (!videoId) {
+        errorMessage.textContent = 'Por favor, ingresa un enlace válido de YouTube.';
+        return;
+    }
+
+    try {
+        const comments = await fetchComments(videoId);
+        displayComments(comments);
+    } catch (error) {
+        errorMessage.textContent = 'Error al obtener los comentarios. Verifica el enlace o la API Key.';
+        console.error(error);
+    }
+});
+
+// Extract YouTube Video ID from URL
+function extractVideoId(url) {
+    // Regular expression to match YouTube video URLs
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
+// Fetch Comments from YouTube API
+async function fetchComments(videoId) {
+    const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=10&order=relevance&key=${API_KEY}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        throw new Error('Error en la solicitud a la API de YouTube');
+    }
+
+    const data = await response.json();
+    return data.items.map(item => ({
+        author: item.snippet.topLevelComment.snippet.authorDisplayName,
+        text: item.snippet.topLevelComment.snippet.textDisplay,
+        likes: item.snippet.topLevelComment.snippet.likeCount
+    })).sort((a, b) => b.likes - a.likes); // Sort by likes in descending order
+}
+
+// Display Comments in the UI
+function displayComments(comments) {
+    if (comments.length === 0) {
+        commentsContainer.innerHTML = '<p>No se encontraron comentarios.</p>';
+        return;
+    }
+
+    comments.forEach(comment => {
+        const commentElement = document.createElement('div');
+        commentElement.classList.add('comment');
+        commentElement.innerHTML = `
+            <p class="comment-author">${comment.author}</p>
+            <p class="comment-text">${comment.text}</p>
+            <p class="comment-likes">Likes: ${comment.likes}</p>
+        `;
+        commentsContainer.appendChild(commentElement);
+    });
+}
+    </script>
+</body>
+</html>
